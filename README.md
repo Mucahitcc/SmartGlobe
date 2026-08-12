@@ -41,12 +41,24 @@ CesiumJS tabanlı, büyük hacimli 3B model verilerinin web ortamında detay kay
 
 ## Ekran Görüntüleri
 
-> Görselleri `docs/` klasörüne ekleyip aşağıdaki satırların yorumunu kaldırın.
+### 3B Görüntüleme
+Tarihi Sebil (Beşiktaş) modeli üzerinde işaretleme ve anlık koordinat okuması. Sol altta TUREF (EPSG:5255) ve WGS84 koordinatları eş zamanlı gösterilir.
 
-<!-- ![Giriş ekranı](docs/01-giris.png) -->
-<!-- ![3B görüntüleme](docs/02-goruntuleme.png) -->
-<!-- ![Ölçüm araçları](docs/03-olcum.png) -->
-<!-- ![Yönetim paneli](docs/04-panel.png) -->
+![3B görüntüleme](docs/02-goruntuleme.png)
+
+### Ölçüm Araçları
+Karaman Köprüsü modeli üzerinde mesafe ve yükseklik ölçümü.
+
+![Ölçüm araçları](docs/03-olcum.png)
+
+### Yönetim Paneli
+Firma, proje ve çalışan yönetimi; proje bazlı erişim yetkilendirmesi.
+
+![Yönetim paneli](docs/04-panel.png)
+
+### Giriş Ekranı
+
+![Giriş ekranı](docs/01-giris.png)
 
 ---
 
@@ -72,7 +84,7 @@ CesiumJS tabanlı, büyük hacimli 3B model verilerinin web ortamında detay kay
 ### 1. Depoyu klonlayın
 
 ```bash
-git clone https://github.com/Mucahitcc/smartglobe.git
+git clone https://github.com/KULLANICI-ADINIZ/smartglobe.git
 cd smartglobe
 ```
 
@@ -121,14 +133,33 @@ JWT anahtarı üretmek için:
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```
 
-### 5. Bağımlılıkları kurun ve çalıştırın
+### 5. Backend sunucusunu başlatın
 
 ```bash
+cd server
 npm install
 npm start
 ```
 
-Sunucu `http://localhost:3000` adresinde çalışır. `login.html` dosyasını tarayıcıda açarak giriş yapabilirsiniz.
+Başarılı çıktı:
+
+```
+veritabanina baglandi
+sunucu 3000 portunda calisiyor
+```
+
+API `http://localhost:3000` adresinde çalışır. Uygulamayı kullanmadan önce bu sunucunun **çalışır durumda olması gerekir**.
+
+### 6. Arayüzü açın
+
+Proje dosyaları bir web sunucusu üzerinden sunulmalıdır (3D Tiles verileri `file://` protokolü üzerinden yüklenmez).
+
+**XAMPP ile:**
+1. Proje klasörünü `C:\xampp\htdocs\` altına yerleştirin
+2. XAMPP Control Panel'den Apache'yi başlatın
+3. Tarayıcıda `http://localhost/SMARTGLOBE/login.html` adresini açın
+
+**Alternatif olarak** VS Code Live Server veya benzeri bir statik sunucu da kullanılabilir.
 
 ### Mevcut kurulumu güncelliyorsanız
 
@@ -139,6 +170,19 @@ node scripts/sifreleri-hashle.js
 ```
 
 Script yalnızca hash'lenmemiş parolaları dönüştürür, birden fazla kez çalıştırmak zararsızdır.
+
+---
+
+## Masaüstü Sürümü
+
+`SmartGlobe-Desktop/` klasöründe, uygulamanın C# WinForms + WebView2 ile hazırlanmış masaüstü sürümü bulunur. WebView2 bileşeni web arayüzünü yerel bir pencerede çalıştırır; böylece uygulama tarayıcı adres çubuğu olmadan, kendi ikonu ve penceresiyle bir masaüstü programı gibi kullanılır.
+
+**Derlemek için:**
+1. `SmartGlobe-Desktop/SmartGlobe.csproj` dosyasını Visual Studio ile açın
+2. NuGet paketlerini geri yükleyin (`Microsoft.Web.WebView2`)
+3. Build alın
+
+**Çalıştırmadan önce** backend sunucusunun ve web sunucusunun (XAMPP) çalışıyor olması gerekir — masaüstü sürümü bunları otomatik başlatmaz.
 
 ---
 
@@ -186,8 +230,10 @@ smartglobe/
 ├── smartglobe.js         # Görüntüleyici mantığı, ölçüm ve dışa aktarma
 ├── smartglobe.css        # Arayüz stilleri
 ├── icon/ logo/ fonts/    # Arayüz varlıkları
+├── docs/                 # Ekran görüntüleri
 ├── cesium_1_133/         # CesiumJS (depoya dahil değil)
 ├── MODEL/                # 3B veri setleri (depoya dahil değil)
+├── SmartGlobe-Desktop/   # C# WinForms + WebView2 masaüstü sürümü
 └── server/
     ├── server.js         # Express API sunucusu
     ├── package.json
