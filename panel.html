@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGlobe — Yönetim Paneli</title>
+  <link rel="icon" href="logo/favicon.png" type="image/png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #080d1a;
+      color: #cdd6f4;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 210px;
+      background: #0d1425;
+      border-right: 1px solid rgba(60,120,200,0.2);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 16px 24px;
+      border-bottom: 1px solid rgba(60,120,200,0.15);
+      margin-bottom: 16px;
+    }
+
+    .sidebar-logo .logo-yazi { font-size: 18px; font-weight: 700; color: white; }
+    .sidebar-logo .logo-yazi span { color: #3a8fff; }
+    .sidebar-logo .alt { font-size: 10px; color: rgba(100,140,200,0.6); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      color: rgba(180,200,240,0.7);
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+    }
+
+    .menu-item:hover { background: rgba(60,120,200,0.1); color: white; }
+    .menu-item.aktif { background: rgba(60,120,200,0.15); color: #3a8fff; border-left-color: #3a8fff; }
+    .menu-item .ikon { font-size: 16px; }
+
+    .sidebar-alt {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid rgba(60,120,200,0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kullanici-avatar {
+      width: 32px; height: 32px;
+      background: #1a4a8a;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: white; flex-shrink: 0;
+    }
+
+    .kullanici-bilgi .ad { font-size: 13px; color: white; font-weight: 500; }
+    .kullanici-bilgi .rol { font-size: 11px; color: rgba(100,140,200,0.6); }
+
+    .icerik { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .ust-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(60,120,200,0.15);
+      background: #0d1425;
+    }
+
+    .ust-bar h1 { font-size: 20px; font-weight: 600; color: white; }
+
+    .uygulamaya-don {
+      background: rgba(60,120,200,0.2);
+      border: 1px solid rgba(60,120,200,0.4);
+      color: #7ab0ff;
+      padding: 7px 16px; border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-family: 'Segoe UI', Tahoma, sans-serif;
+      transition: all 0.15s;
+    }
+
+    .uygulamaya-don:hover { background: rgba(60,120,200,0.35); color: white; }
+
+    .sayfa { flex: 1; overflow-y: auto; padding: 24px; display: none; }
+    .sayfa.aktif { display: block; }
+
+    .kart {
+      background: #0d1425;
+      border: 1px solid rgba(60,120,200,0.2);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .kart-baslik { font-size: 15px; font-weight: 600; color: #3a8fff; margin-bottom: 16px; }
+
+    .form-satir { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .form-grup { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 150px; }
+    .form-grup label { font-size: 11px; color: rgba(150,180,220,0.7); text-transform: uppercase; letter-spacing: 1px; }
+
+    .form-input {
+      padding: 9px 12px;
+      background: rgba(15,30,65,0.8);
+      border: 1px solid rgba(60,120,200,0.25);
+      border-radius: 6px;
+      color: #d0e0ff; font-size: 13px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      outline: none;
+    }
+
+    .form-input:focus { border-color: rgba(60,140,255,0.5); }
+
+    .ekle-btn {
+      background: #1a6fd4; border: none; color: white;
+      padding: 9px 20px; border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-family: 'Segoe UI', Tahoma, sans-serif;
+      align-self: flex-end; transition: background 0.15s; white-space: nowrap;
+    }
+
+    .ekle-btn:hover { background: #2280e8; }
+
+    .tablo { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    .tablo th {
+      text-align: left; padding: 8px 12px;
+      color: rgba(150,180,220,0.6); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 1px;
+      border-bottom: 1px solid rgba(60,120,200,0.15);
+    }
+
+    .tablo td { padding: 12px; border-bottom: 1px solid rgba(60,120,200,0.08); color: #cdd6f4; }
+    .tablo tr:last-child td { border-bottom: none; }
+    .tablo tr:hover td { background: rgba(60,120,200,0.05); }
+
+    .sil-btn {
+      background: rgba(180,30,30,0.3);
+      border: 1px solid rgba(200,50,50,0.4);
+      color: #ff9090; padding: 5px 12px; border-radius: 5px;
+      cursor: pointer; font-size: 12px;
+      font-family: 'Segoe UI', Tahoma, sans-serif; transition: all 0.15s;
+    }
+
+    .sil-btn:hover { background: rgba(180,30,30,0.6); }
+
+    .izin-btn {
+      background: rgba(60,120,200,0.2);
+      border: 1px solid rgba(60,120,200,0.4);
+      color: #7ab0ff; padding: 5px 12px; border-radius: 5px;
+      cursor: pointer; font-size: 12px;
+      font-family: 'Segoe UI', Tahoma, sans-serif; transition: all 0.15s;
+    }
+
+    .izin-btn:hover { background: rgba(60,120,200,0.4); }
+
+    .modal-arka {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+
+    .modal-arka.acik { display: flex; }
+
+    .modal {
+      background: #0d1425;
+      border: 1px solid rgba(60,120,200,0.3);
+      border-radius: 12px; padding: 24px;
+      width: 420px; max-width: 90vw;
+    }
+
+    .modal-baslik { font-size: 16px; font-weight: 600; color: white; margin-bottom: 20px; }
+
+    .toggle-satir {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(60,120,200,0.1);
+    }
+
+    .toggle-satir:last-of-type { border-bottom: none; }
+    .toggle-satir .isim { font-size: 14px; color: #cdd6f4; }
+
+    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: rgba(60,80,120,0.5);
+      border-radius: 24px; cursor: pointer; transition: 0.2s;
+    }
+
+    .toggle-slider:before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; background: white;
+      border-radius: 50%; top: 3px; left: 3px; transition: 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider { background: #1a6fd4; }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+    .modal-kapat {
+      background: #1a6fd4; border: none; color: white;
+      padding: 9px 24px; border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-family: 'Segoe UI', Tahoma, sans-serif;
+      margin-top: 20px; float: right;
+    }
+
+    .bos-durum { text-align: center; color: rgba(150,180,220,0.4); padding: 30px; font-size: 13px; }
+
+    .mesaj { padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; display: none; }
+    .mesaj.basari { background: rgba(30,120,60,0.25); border: 1px solid rgba(50,180,80,0.4); color: #80ffaa; }
+    .mesaj.hata { background: rgba(180,30,30,0.25); border: 1px solid rgba(220,60,60,0.4); color: #ff9090; }
+
+    .rol-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(60,120,200,0.2); color: #7ab0ff; }
+    .rol-badge.admin { background: rgba(180,120,20,0.2); color: #ffcc60; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-yazi">Smart<span>Globe</span></div>
+      <div class="alt">Yönetim Paneli</div>
+    </div>
+
+    <div class="menu-item aktif" onclick="sayfaAc('firmalar', this)">
+  <span class="ikon">🏢</span> Firmalar
+</div>
+<div class="menu-item" onclick="sayfaAc('projeler', this)">
+  <span class="ikon">📁</span> Projeler
+</div>
+<div class="menu-item" onclick="sayfaAc('calisanlar', this)">
+  <span class="ikon">👤</span> Çalışanlar
+</div>
+
+    <div class="sidebar-alt">
+      <div class="kullanici-avatar" id="avatarHarf">A</div>
+      <div class="kullanici-bilgi">
+        <div class="ad" id="sidebarAd">Admin</div>
+        <div class="rol">Yönetici</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="icerik">
+
+    <div class="ust-bar">
+      <h1 id="sayfaBaslik">Firmalar</h1>
+      <button class="uygulamaya-don" onclick="window.location.href='index.html'">← Uygulamaya Dön</button>
+    </div>
+
+    <div class="sayfa" id="sayfaCalisanlar">
+      <div class="kart">
+        <div class="kart-baslik">Yeni Çalışan Ekle</div>
+        <div id="calisanMesaj" class="mesaj"></div>
+        <div class="form-satir">
+          <div class="form-grup">
+            <label>Ad Soyad</label>
+            <input type="text" id="yeniAd" class="form-input" placeholder="Ad Soyad">
+          </div>
+          <div class="form-grup">
+            <label>Kullanıcı Adı</label>
+            <input type="text" id="yeniKullanici" class="form-input" placeholder="kullanici_adi">
+          </div>
+          <div class="form-grup">
+            <label>Şifre</label>
+            <input type="password" id="yeniSifre" class="form-input" placeholder="Şifre">
+          </div>
+          <button class="ekle-btn" onclick="calisanEkle()">+ Ekle</button>
+        </div>
+      </div>
+
+      <div class="kart">
+        <div class="kart-baslik" id="calisanSayisi">Çalışanlar</div>
+        <table class="tablo">
+          <thead>
+            <tr>
+              <th>Ad Soyad</th>
+              <th>Kullanıcı Adı</th>
+              <th>Rol</th>
+              <th>Proje İzinleri</th>
+              <th>Sil</th>
+            </tr>
+          </thead>
+          <tbody id="calisanTablosu">
+            <tr><td colspan="5" class="bos-durum">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sayfa" id="sayfaProjeler">
+      <div class="kart">
+        <div class="kart-baslik">Yeni Proje Ekle</div>
+        <div id="projeMesaj" class="mesaj"></div>
+        <div class="form-satir">
+          <div class="form-grup">
+            <label>Proje Adı</label>
+            <input type="text" id="yeniProjeAd" class="form-input" placeholder="Proje adı">
+          </div>
+          <div class="form-grup">
+            <label>Firma</label>
+            <select id="yeniProjeFirma" class="form-input">
+              <option value="">Firma Seç</option>
+            </select>
+          </div>
+          <div class="form-grup">
+            <label>Model Yolu</label>
+            <input type="text" id="yeniModelYol" class="form-input" placeholder="MODEL/klasor/tileset.json">
+          </div>
+          <div class="form-grup" style="max-width:100px;">
+            <label>Y Offset</label>
+            <input type="number" id="yeniOffset" class="form-input" placeholder="0" value="0">
+          </div>
+          <button class="ekle-btn" onclick="projeEkle()">+ Ekle</button>
+        </div>
+      </div>
+
+      <div class="kart">
+        <div class="kart-baslik" id="projeSayisi">Projeler</div>
+        <table class="tablo">
+          <thead>
+            <tr>
+              <th>Proje Adı</th>
+              <th>Firma</th>
+              <th>Model Yolu</th>
+              <th>Offset</th>
+              <th>Erişim</th>
+              <th>Sil</th>
+            </tr>
+          </thead>
+          <tbody id="projeTablosu">
+            <tr><td colspan="6" class="bos-durum">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sayfa aktif" id="sayfaFirmalar">
+      <div class="kart">
+        <div class="kart-baslik">Yeni Firma Ekle</div>
+        <div id="firmaMesaj" class="mesaj"></div>
+        <div class="form-satir">
+          <div class="form-grup">
+            <label>Firma Adı</label>
+            <input type="text" id="yeniFirmaAd" class="form-input" placeholder="Firma adı">
+          </div>
+          <div class="form-grup">
+            <label>Yetkili Kişi</label>
+            <input type="text" id="yeniYetkili" class="form-input" placeholder="Ad Soyad">
+          </div>
+          <div class="form-grup">
+            <label>Telefon</label>
+            <input type="text" id="yeniTelefon" class="form-input" placeholder="05xx xxx xx xx">
+          </div>
+          <div class="form-grup">
+            <label>Adres</label>
+            <input type="text" id="yeniAdres" class="form-input" placeholder="Adres">
+          </div>
+          <button class="ekle-btn" onclick="firmaEkle()">+ Ekle</button>
+        </div>
+      </div>
+
+      <div class="kart">
+        <div class="kart-baslik" id="firmaSayisi">Firmalar</div>
+        <table class="tablo">
+          <thead>
+            <tr>
+              <th>Firma Adı</th>
+              <th>Yetkili</th>
+              <th>Telefon</th>
+              <th>Adres</th>
+              <th>Sil</th>
+            </tr>
+          </thead>
+          <tbody id="firmaTablosu">
+            <tr><td colspan="5" class="bos-durum">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-arka" id="calisanModal">
+    <div class="modal">
+      <div class="modal-baslik" id="calisanModalBaslik">Proje İzinleri</div>
+      <div id="calisanModalIcerik"></div>
+      <button class="modal-kapat" onclick="modalKapat('calisanModal')">Kapat</button>
+    </div>
+  </div>
+
+  <div class="modal-arka" id="projeModal">
+    <div class="modal">
+      <div class="modal-baslik" id="projeModalBaslik">Erişim Yönetimi</div>
+      <div id="projeModalIcerik"></div>
+      <button class="modal-kapat" onclick="modalKapat('projeModal')">Kapat</button>
+    </div>
+  </div>
+
+  <script>
+    var token = localStorage.getItem('sgToken');
+    var rol = localStorage.getItem('sgRol');
+
+    if (!token || rol !== 'admin') {
+      window.location.href = 'index.html';
+    }
+
+    var ad = localStorage.getItem('sgAd') || 'Admin';
+    document.getElementById('sidebarAd').textContent = ad;
+    document.getElementById('avatarHarf').textContent = ad.charAt(0).toUpperCase();
+
+    var tumCalisanlar = [];
+    var tumProjeler = [];
+    var tumFirmalar = [];
+
+    function sayfaAc(id, el) {
+      document.querySelectorAll('.sayfa').forEach(function(s) { s.classList.remove('aktif'); });
+      document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('aktif'); });
+      document.getElementById('sayfa' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('aktif');
+      el.classList.add('aktif');
+      document.getElementById('sayfaBaslik').textContent = el.textContent.trim();
+    }
+
+    function apiIste(url, metod, veri) {
+      var ayarlar = {
+        method: metod || 'GET',
+        headers: { 'Content-Type': 'application/json', 'authorization': token }
+      };
+      if (veri) ayarlar.body = JSON.stringify(veri);
+      return fetch('http://localhost:3000' + url, ayarlar).then(function(r) { return r.json(); });
+    }
+
+    function calisanlariYukle() {
+      apiIste('/api/kullanicilar').then(function(veri) {
+        tumCalisanlar = veri;
+        var tbody = document.getElementById('calisanTablosu');
+        document.getElementById('calisanSayisi').textContent = 'Çalışanlar (' + veri.length + ')';
+
+        if (!veri.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="bos-durum">Henüz çalışan eklenmedi</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        veri.forEach(function(c) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + (c.ad_soyad || '-') + '</td>' +
+            '<td>' + c.kullanici_adi + '</td>' +
+            '<td><span class="rol-badge ' + (c.rol === 'admin' ? 'admin' : '') + '">' + c.rol + '</span></td>' +
+            '<td><button class="izin-btn" onclick="calisanIzinAc(' + c.id + ', \'' + (c.ad_soyad || c.kullanici_adi) + '\')">İzinler</button></td>' +
+            '<td>' + (c.rol !== 'admin' ? '<button class="sil-btn" onclick="calisanSil(' + c.id + ')">Sil</button>' : '-') + '</td>';
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function projeleriYukle() {
+      apiIste('/api/projeler').then(function(veri) {
+        tumProjeler = veri;
+        var tbody = document.getElementById('projeTablosu');
+        document.getElementById('projeSayisi').textContent = 'Projeler (' + veri.length + ')';
+
+        if (!veri.length) {
+          tbody.innerHTML = '<tr><td colspan="6" class="bos-durum">Henüz proje eklenmedi</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        veri.forEach(function(p) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + p.ad + '</td>' +
+            '<td style="color:#7ab0ff;font-size:12px;">' + (p.firma_adi || '-') + '</td>' +
+            '<td style="color:rgba(150,180,220,0.6);font-size:12px;">' + (p.model_yolu || '-') + '</td>' +
+            '<td>' + (p.y_offset || 0) + '</td>' +
+            '<td><button class="izin-btn" onclick="projeErisimAc(' + p.id + ', \'' + p.ad + '\')">Erişim</button></td>' +
+            '<td><button class="sil-btn" onclick="projeSil(' + p.id + ')">Sil</button></td>';
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function firmalariYukle() {
+      apiIste('/api/firmalar').then(function(veri) {
+        tumFirmalar = veri;
+        var tbody = document.getElementById('firmaTablosu');
+        document.getElementById('firmaSayisi').textContent = 'Firmalar (' + veri.length + ')';
+
+        var select = document.getElementById('yeniProjeFirma');
+        select.innerHTML = '<option value="">Firma Seç</option>';
+        veri.forEach(function(f) {
+          var opt = document.createElement('option');
+          opt.value = f.id;
+          opt.textContent = f.ad;
+          select.appendChild(opt);
+        });
+
+        if (!veri.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="bos-durum">Henüz firma eklenmedi</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        veri.forEach(function(f) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + f.ad + '</td>' +
+            '<td>' + (f.yetkili || '-') + '</td>' +
+            '<td>' + (f.telefon || '-') + '</td>' +
+            '<td>' + (f.adres || '-') + '</td>' +
+            '<td><button class="sil-btn" onclick="firmaSil(' + f.id + ')">Sil</button></td>';
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function calisanEkle() {
+      var ad_soyad = document.getElementById('yeniAd').value.trim();
+      var kullanici_adi = document.getElementById('yeniKullanici').value.trim();
+      var sifre = document.getElementById('yeniSifre').value;
+      var mesajEl = document.getElementById('calisanMesaj');
+
+      if (!ad_soyad || !kullanici_adi || !sifre) {
+        mesajEl.textContent = 'Tüm alanları doldurun';
+        mesajEl.className = 'mesaj hata';
+        mesajEl.style.display = 'block';
+        return;
+      }
+
+      apiIste('/api/kullanicilar', 'POST', { ad_soyad: ad_soyad, kullanici_adi: kullanici_adi, sifre: sifre, rol: 'calisan' })
+        .then(function(veri) {
+          if (veri.mesaj) {
+            mesajEl.textContent = 'Çalışan eklendi!';
+            mesajEl.className = 'mesaj basari';
+            mesajEl.style.display = 'block';
+            document.getElementById('yeniAd').value = '';
+            document.getElementById('yeniKullanici').value = '';
+            document.getElementById('yeniSifre').value = '';
+            calisanlariYukle();
+            setTimeout(function() { mesajEl.style.display = 'none'; }, 3000);
+          } else {
+            mesajEl.textContent = veri.hata || 'Hata oluştu';
+            mesajEl.className = 'mesaj hata';
+            mesajEl.style.display = 'block';
+          }
+        });
+    }
+
+    function calisanSil(id) {
+      if (!confirm('Bu çalışanı silmek istediğinize emin misiniz?')) return;
+      apiIste('/api/kullanicilar/' + id, 'DELETE').then(function() { calisanlariYukle(); });
+    }
+
+    function projeEkle() {
+      var ad = document.getElementById('yeniProjeAd').value.trim();
+      var firma_id = document.getElementById('yeniProjeFirma').value || null;
+      var model_yolu = document.getElementById('yeniModelYol').value.trim();
+      var y_offset = parseFloat(document.getElementById('yeniOffset').value) || 0;
+      var mesajEl = document.getElementById('projeMesaj');
+
+      if (!ad || !model_yolu) {
+        mesajEl.textContent = 'Proje adı ve model yolu gerekli';
+        mesajEl.className = 'mesaj hata';
+        mesajEl.style.display = 'block';
+        return;
+      }
+
+      apiIste('/api/projeler', 'POST', { ad: ad, model_yolu: model_yolu, y_offset: y_offset, firma_id: firma_id })
+        .then(function(veri) {
+          if (veri.mesaj) {
+            mesajEl.textContent = 'Proje eklendi!';
+            mesajEl.className = 'mesaj basari';
+            mesajEl.style.display = 'block';
+            document.getElementById('yeniProjeAd').value = '';
+            document.getElementById('yeniModelYol').value = '';
+            document.getElementById('yeniOffset').value = '0';
+            document.getElementById('yeniProjeFirma').value = '';
+            projeleriYukle();
+            setTimeout(function() { mesajEl.style.display = 'none'; }, 3000);
+          } else {
+            mesajEl.textContent = veri.hata || 'Hata oluştu';
+            mesajEl.className = 'mesaj hata';
+            mesajEl.style.display = 'block';
+          }
+        });
+    }
+
+    function projeSil(id) {
+      if (!confirm('Bu projeyi silmek istediğinize emin misiniz?')) return;
+      apiIste('/api/projeler/' + id, 'DELETE').then(function() { projeleriYukle(); });
+    }
+
+    function firmaEkle() {
+      var ad = document.getElementById('yeniFirmaAd').value.trim();
+      var yetkili = document.getElementById('yeniYetkili').value.trim();
+      var telefon = document.getElementById('yeniTelefon').value.trim();
+      var adres = document.getElementById('yeniAdres').value.trim();
+      var mesajEl = document.getElementById('firmaMesaj');
+
+      if (!ad) {
+        mesajEl.textContent = 'Firma adı gerekli';
+        mesajEl.className = 'mesaj hata';
+        mesajEl.style.display = 'block';
+        return;
+      }
+
+      apiIste('/api/firmalar', 'POST', { ad: ad, yetkili: yetkili, telefon: telefon, adres: adres })
+        .then(function(veri) {
+          if (veri.mesaj) {
+            mesajEl.textContent = 'Firma eklendi!';
+            mesajEl.className = 'mesaj basari';
+            mesajEl.style.display = 'block';
+            document.getElementById('yeniFirmaAd').value = '';
+            document.getElementById('yeniYetkili').value = '';
+            document.getElementById('yeniTelefon').value = '';
+            document.getElementById('yeniAdres').value = '';
+            firmalariYukle();
+            setTimeout(function() { mesajEl.style.display = 'none'; }, 3000);
+          } else {
+            mesajEl.textContent = veri.hata || 'Hata oluştu';
+            mesajEl.className = 'mesaj hata';
+            mesajEl.style.display = 'block';
+          }
+        });
+    }
+
+    function firmaSil(id) {
+      if (!confirm('Bu firmayı silmek istediğinize emin misiniz?')) return;
+      apiIste('/api/firmalar/' + id, 'DELETE').then(function(veri) {
+        if (veri.hata) {
+          alert(veri.hata);
+        } else {
+          firmalariYukle();
+        }
+      });
+    }
+
+    function calisanIzinAc(calisanId, calisanAd) {
+      document.getElementById('calisanModalBaslik').textContent = calisanAd + ' — Proje İzinleri';
+      var icerik = document.getElementById('calisanModalIcerik');
+      icerik.innerHTML = 'Yükleniyor...';
+
+      apiIste('/api/kullanicilar/' + calisanId + '/projeler').then(function(atananlar) {
+        var atananIdler = atananlar.map(function(p) { return p.id; });
+        icerik.innerHTML = '';
+
+        tumProjeler.forEach(function(proje) {
+          var atanmis = atananIdler.includes(proje.id);
+          var div = document.createElement('div');
+          div.className = 'toggle-satir';
+          div.innerHTML =
+            '<span class="isim">' + proje.ad + (proje.firma_adi ? ' <small style="color:#7ab0ff">(' + proje.firma_adi + ')</small>' : '') + '</span>' +
+            '<label class="toggle"><input type="checkbox" ' + (atanmis ? 'checked' : '') + ' onchange="yetkiDegistir(' + calisanId + ',' + proje.id + ', this.checked)"><span class="toggle-slider"></span></label>';
+          icerik.appendChild(div);
+        });
+
+        if (!tumProjeler.length) icerik.innerHTML = '<div class="bos-durum">Henüz proje eklenmedi</div>';
+        document.getElementById('calisanModal').classList.add('acik');
+      });
+    }
+
+    function projeErisimAc(projeId, projeAd) {
+      document.getElementById('projeModalBaslik').textContent = projeAd + ' — Erişim Yönetimi';
+      var icerik = document.getElementById('projeModalIcerik');
+      icerik.innerHTML = 'Yükleniyor...';
+
+      apiIste('/api/projeler/' + projeId + '/kullanicilar').then(function(atananlar) {
+        var atananIdler = atananlar.map(function(c) { return c.id; });
+        icerik.innerHTML = '';
+
+        var calisanlar = tumCalisanlar.filter(function(c) { return c.rol !== 'admin'; });
+        calisanlar.forEach(function(calisan) {
+          var atanmis = atananIdler.includes(calisan.id);
+          var div = document.createElement('div');
+          div.className = 'toggle-satir';
+          div.innerHTML =
+            '<span class="isim">' + (calisan.ad_soyad || calisan.kullanici_adi) + '</span>' +
+            '<label class="toggle"><input type="checkbox" ' + (atanmis ? 'checked' : '') + ' onchange="yetkiDegistir(' + calisan.id + ',' + projeId + ', this.checked)"><span class="toggle-slider"></span></label>';
+          icerik.appendChild(div);
+        });
+
+        if (!calisanlar.length) icerik.innerHTML = '<div class="bos-durum">Henüz çalışan eklenmedi</div>';
+        document.getElementById('projeModal').classList.add('acik');
+      });
+    }
+
+    function yetkiDegistir(kullanici_id, proje_id, ekle) {
+      if (ekle) {
+        apiIste('/api/yetki', 'POST', { kullanici_id: kullanici_id, proje_id: proje_id });
+      } else {
+        apiIste('/api/yetki', 'DELETE', { kullanici_id: kullanici_id, proje_id: proje_id });
+      }
+    }
+
+    function modalKapat(id) {
+      document.getElementById(id).classList.remove('acik');
+    }
+
+    document.querySelectorAll('.modal-arka').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        if (e.target === el) el.classList.remove('acik');
+      });
+    });
+
+    calisanlariYukle();
+    projeleriYukle();
+    firmalariYukle();
+  </script>
+
+</body>
+</html>

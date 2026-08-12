@@ -1,0 +1,45 @@
+# ---- GIZLI BILGILER - ASLA COMMIT EDILMEZ ----
+.env
+.env.local
+server/.env
+server/.env.local
+
+# ---- Bagimliliklar ----
+node_modules/
+server/node_modules/
+
+# ---- Cesium kutuphanesi ----
+# Buyuk dosya. Kullanicilar cesium.com adresinden kendileri indirir.
+cesium_1_133/
+
+# ---- 3B model verileri ----
+# Tileset dosyalari cok buyuk, GitHub'in 100MB dosya sinirini asar.
+MODEL/
+*.b3dm
+*.pnts
+*.i3dm
+*.cmpt
+
+# ---- Bos/gecici dosyalar ----
+node
+
+# ---- Loglar ----
+*.log
+npm-debug.log*
+logs/
+
+# ---- Isletim sistemi ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Editor ----
+.vscode/
+.idea/
+*.swp
+
+# ---- Gecici ----
+tmp/
+temp/
+dist/
+build/

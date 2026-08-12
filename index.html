@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>SmartGlobe 3B Görüntüleyici</title>
+  <link rel="icon" href="logo/favicon.png" type="image/x-icon" />
+
+  <script src="cesium_1_133/Build/Cesium/Cesium.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <link href="cesium_1_133/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+    }
+  </style>
+
+  <link rel="stylesheet" href="smartglobe.css">
+</head>
+
+<body>
+
+  <div id="cesiumContainer"></div>
+
+  <div class="aracCubugu">
+    <select id="modelSec">
+      <option value="a" selected>Proje Seç</option>
+    </select>
+  </div>
+
+  <div class="button-container">
+
+    <button id="anaKonum" class="custom-button" onclick="eveDon();">
+      <div class="icon-container"><img src="icon/icons8-home-40.png" alt="ana konum"></div>
+      <div class="text-container">Ana<br>Konum</div>
+    </button>
+
+    <button id="yukseklikOlcumBtn" class="custom-button">
+      <div class="icon-container"><img src="icon/yukseklik.png" alt="yükseklik"></div>
+      <div class="text-container">Yükseklik<br>Ölçümü</div>
+    </button>
+
+    <button id="measureBtn" class="custom-button">
+      <div class="icon-container"><img src="icon/mesafe.png" alt="mesafe"></div>
+      <div class="text-container">Mesafe<br>Ölçümü</div>
+    </button>
+
+    <button id="alanOlcum" class="custom-button">
+      <div class="icon-container"><img src="icon/icons8-alan-40.png" alt="alan"></div>
+      <div class="text-container">Alan<br>Ölçümü</div>
+    </button>
+
+    <button id="KoordinatOku" class="custom-button">
+      <div class="icon-container"><img src="icon/icons8-koordinat-40.png" alt="koordinat"></div>
+      <div class="text-container">Koordinat<br>Oku</div>
+    </button>
+
+    <button id="cizimKaydet" class="custom-button">
+      <div class="icon-container"><img src="icon/geojson.png" alt="geojson"></div>
+      <div class="text-container">GeoJSON<br>Kaydet</div>
+    </button>
+
+    <button id="dxfKabu" class="custom-button">
+      <div class="icon-container"><img src="icon/dxf.png" alt="dxf"></div>
+      <div class="text-container">DXF Kaydet</div>
+    </button>
+
+    <button id="kmzKaydet" class="custom-button">
+      <div class="icon-container">🗺️</div>
+      <div class="text-container">KMZ Kaydet</div>
+    </button>
+
+    <button id="TXTaktar" class="custom-button">
+      <div class="icon-container"><img src="icon/icons8-aktar.png" alt="txt"></div>
+      <div class="text-container">Koordinat<br>Aktar</div>
+    </button>
+
+    <button id="arazi3d" class="custom-button" onclick="arazi3dGetir();">
+      <div class="icon-container"><img src="icon/icons8-global-50.png" alt="arazi"></div>
+      <div class="text-container">Arazi<br>Aç/Kapa</div>
+    </button>
+
+    <button id="uyduHarita" class="custom-button">
+      <div id="toggleIkon" class="icon-container"><img src="icon/icons8-harita-40.png" alt="harita"></div>
+      <div id="btnEtiket" class="text-container">Harita Getir</div>
+    </button>
+
+    <button id="ortoPerspektif" class="custom-button">
+      <div id="ikonDegis1" class="icon-container"><img src="icon/perspektif.png" alt="perspektif"></div>
+      <div id="btn_etiket1" class="text-container">Perspektif<br>Ortografik</div>
+    </button>
+
+    <button id="ustBakisDiv" class="custom-button" onclick="setTopView();">
+      <div class="icon-container"><img src="icon/icons8-ust_gorunus-40.png" alt="üst"></div>
+      <div class="text-container">Üst<br>Görünüş</div>
+    </button>
+
+    <button id="ucDereceCizgi" class="custom-button">
+      <div class="icon-container"><img src="icon/icons8-meridian-40.png" alt="meridyen"></div>
+      <div class="text-container">3 Derece<br>Gauss Kruger</div>
+    </button>
+
+    <button id="pinAt" style="
+  background: rgba(8,13,26,0.85);
+  border: 1px solid rgba(60,120,200,0.4);
+  color: #7ab0ff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: sans-serif;
+  height: 50px;
+">📍 Pin Ekle</button>
+
+  </div>
+
+  <div style="position:absolute; top:8px; right:10px; z-index:100; display:flex; align-items:center; gap:8px;">
+
+    <span id="kullaniciAdi" style="color:white; font-size:13px; font-family:sans-serif; background:rgba(20,30,60,0.7); padding:5px 10px; border-radius:5px;">👤 Admin</span>
+
+    <button id="yonetimBtn" onclick="window.location.href='panel.html'" style="
+      display:none;
+      background:rgba(20,30,60,0.7);
+      border:1px solid rgba(60,120,200,0.4);
+      color:#7ab0ff;
+      padding:5px 12px;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:13px;
+      font-family:sans-serif;
+    ">⚙ Yönetim</button>
+
+    <button onclick="cikisYap()" style="
+      background:rgba(180,30,30,0.7);
+      border:none;
+      color:white;
+      padding:5px 12px;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:13px;
+      font-family:sans-serif;
+    ">Çıkış</button>
+
+  </div>
+
+  <div id="pinInputPanel" style="
+    position:absolute;
+    background:rgba(40,40,40,0.9);
+    padding:10px;
+    border-radius:8px;
+    display:none;
+    z-index:1000;
+    color:white;
+    font-family:sans-serif;
+  ">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:14px;">Açıklama:</span>
+      <span id="pinCloseBtn" style="cursor:pointer; color:rgb(243,238,238); font-weight:bold; margin-left:10px;">✖</span>
+    </div>
+    <input type="text" id="pinText" placeholder="Pin açıklaması..." style="padding:5px; width:200px; margin-top:5px;">
+    <button id="pinSaveBtn" style="padding:5px 10px; margin-top:5px; display:block;">Kaydet</button>
+  </div>
+
+  <div class="smartGlobe">
+    <img src="logo/smartglobe_logo.png" class="smartGlobeLogo" alt="logo">
+  </div>
+
+  <script>
+  var token = localStorage.getItem('sgToken');
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+</script>
+
+  <script src="smartglobe.js"></script>
+</body>
+</html>

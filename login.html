@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGlobe - Giriş</title>
+  <link rel="icon" href="logo/favicon.png" type="image/png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #0a0f1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    
+    /* içerik wrapper */
+    .sayfa {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+    }
+
+    /* logo ve başlık */
+    .ust {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: yukariGel 0.7s ease both;
+    }
+
+    .logo-img {
+      width: 220px;
+      margin-bottom: 10px;
+      /* gradient logo png'si arka planla uyumlu */
+    }
+
+    .alt-yazi {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: rgba(150, 190, 255, 0.7);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* login kutusu */
+    .kart {
+      background: rgba(10, 20, 45, 0.75);
+      border: 1px solid rgba(60, 120, 200, 0.3);
+      border-radius: 12px;
+      padding: 36px 40px;
+      width: 100%;
+      max-width: 400px;
+      backdrop-filter: blur(12px);
+      animation: yukariGel 0.7s ease 0.15s both;
+    }
+
+    .kart-baslik {
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .kart-altbaslik {
+      font-size: 13px;
+      color: rgba(150, 180, 220, 0.7);
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    /* input alanları */
+    .input-grup {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .input-ikon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      color: rgba(100, 150, 220, 0.7);
+      pointer-events: none;
+    }
+
+    .input-alan {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: rgba(15, 30, 65, 0.8);
+      border: 1px solid rgba(60, 120, 200, 0.25);
+      border-radius: 8px;
+      color: #d0e0ff;
+      font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-alan::placeholder {
+      color: rgba(100, 140, 200, 0.45);
+    }
+
+    .input-alan:focus {
+      border-color: rgba(60, 140, 255, 0.6);
+      background: rgba(15, 35, 75, 0.9);
+    }
+
+    /* şifre göster/gizle */
+    .goster-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(100, 150, 220, 0.6);
+      cursor: pointer;
+      font-size: 15px;
+      padding: 0;
+    }
+
+    .goster-btn:hover {
+      color: rgba(100, 180, 255, 0.9);
+    }
+
+    /* beni hatırla ve şifremi unuttum */
+    .orta-satir {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      margin-top: 4px;
+    }
+
+    .beni-hatirla {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(150, 180, 220, 0.8);
+      cursor: pointer;
+    }
+
+    .beni-hatirla input[type="checkbox"] {
+      accent-color: #3a8fff;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    .sifremi-unuttum {
+      font-size: 13px;
+      color: #3a8fff;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .sifremi-unuttum:hover {
+      color: #7ab8ff;
+    }
+
+    /* giriş yap butonu */
+    .giris-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #1a6fd4, #0f4fa8);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .giris-btn:hover {
+      background: linear-gradient(135deg, #2280e8, #1560c0);
+      transform: translateY(-1px);
+    }
+
+    .giris-btn:active {
+      transform: translateY(0px);
+    }
+
+    /* hata mesajı */
+    .hata {
+      background: rgba(180, 30, 30, 0.25);
+      border: 1px solid rgba(220, 60, 60, 0.4);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #ff9090;
+      margin-bottom: 16px;
+      display: none;
+      text-align: center;
+    }
+
+    /* alt yazı */
+    .alt-footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: rgba(100, 130, 180, 0.5);
+      text-align: center;
+      animation: yukariGel 0.7s ease 0.3s both;
+    }
+
+    /* yükleniyor animasyonu */
+    .giris-btn.yukleniyor {
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: don 0.7s linear infinite;
+      display: none;
+    }
+
+    .giris-btn.yukleniyor .spinner {
+      display: block;
+    }
+
+    .giris-btn.yukleniyor .btn-yazi {
+      display: none;
+    }
+
+    @keyframes yukariGel {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes don {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  
+
+  <div class="sayfa">
+
+    <!-- üst logo -->
+    <div class="ust">
+      <img src="logo/smartglobe_logo.png" class="logo-img" alt="SmartGlobe">
+      <div class="alt-yazi">3B Veri Görüntüleme ve Yönetim Sistemi</div>
+    </div>
+
+    <!-- login kutusu -->
+    <div class="kart">
+      <div class="kart-baslik">Giriş Yap</div>
+      <div class="kart-altbaslik">Lütfen hesabınıza giriş yapın</div>
+
+      <!-- hata mesajı -->
+      <div class="hata" id="hataMsg">Kullanıcı adı veya şifre hatalı</div>
+
+      <!-- kullanıcı adı -->
+      <div class="input-grup">
+        <span class="input-ikon">✉</span>
+        <input
+          type="text"
+          id="kullanici"
+          class="input-alan"
+          placeholder="Kullanıcı adı"
+          autocomplete="username"
+        >
+      </div>
+
+      <!-- şifre -->
+      <div class="input-grup">
+        <span class="input-ikon">🔒</span>
+        <input
+          type="password"
+          id="sifre"
+          class="input-alan"
+          placeholder="Şifre"
+          autocomplete="current-password"
+        >
+        <button class="goster-btn" id="gosterBtn" onclick="sifreGoster()" type="button">👁</button>
+      </div>
+
+      <!-- beni hatırla -->
+      <div class="orta-satir">
+        <label class="beni-hatirla">
+          <input type="checkbox" id="beniHatirla">
+          Beni Hatırla
+        </label>
+      </div>
+
+      <!-- giriş butonu -->
+      <button class="giris-btn" id="girisBtn" onclick="girisYap()">
+        <span class="spinner"></span>
+        <span class="btn-yazi">Giriş Yap &nbsp;→</span>
+      </button>
+    </div>
+
+    <div class="alt-footer">© 2026 SmartGlobe — Tüm Hakları Saklıdır</div>
+  </div>
+
+  <script>
+    // API adresi - sunucu baska yerdeyse tek yerden degistirilir
+    var API_ADRES = 'http://localhost:3000';
+
+    // şifre göster/gizle
+    function sifreGoster() {
+      var sifre = document.getElementById('sifre');
+      var btn = document.getElementById('gosterBtn');
+      if (sifre.type === 'password') {
+        sifre.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        sifre.type = 'password';
+        btn.textContent = '👁';
+      }
+    }
+
+    // enter tuşuyla giriş
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') girisYap();
+    });
+
+    // giriş fonksiyonu
+   function girisYap() {
+  var kullanici = document.getElementById('kullanici').value.trim();
+  var sifre = document.getElementById('sifre').value;
+  var hataMsg = document.getElementById('hataMsg');
+  var btn = document.getElementById('girisBtn');
+
+  // basit validasyon
+  if (!kullanici || !sifre) {
+    hataMsg.textContent = 'Kullanıcı adı ve şifre boş bırakılamaz';
+    hataMsg.style.display = 'block';
+    return;
+  }
+
+  hataMsg.style.display = 'none';
+  btn.classList.add('yukleniyor');
+
+  fetch(API_ADRES + '/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ kullanici_adi: kullanici, sifre: sifre })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    btn.classList.remove('yukleniyor');
+    if (data.token) {
+      localStorage.setItem('sgToken', data.token);
+      localStorage.setItem('sgRol', data.rol);
+      localStorage.setItem('sgAd', data.ad);
+
+      // beni hatirla: SADECE kullanici adi saklanir.
+      // Sifre hicbir kosulda tarayiciya kaydedilmez.
+      if (document.getElementById('beniHatirla').checked) {
+        localStorage.setItem('sgHatirla', 'evet');
+        localStorage.setItem('sgKullanici', kullanici);
+      } else {
+        localStorage.removeItem('sgHatirla');
+        localStorage.removeItem('sgKullanici');
+      }
+
+      window.location.href = 'index.html';
+    } else {
+      hataMsg.textContent = data.hata || 'Giriş başarısız';
+      hataMsg.style.display = 'block';
+    }
+  })
+  .catch(function() {
+    btn.classList.remove('yukleniyor');
+    hataMsg.textContent = 'Sunucuya bağlanılamadı';
+    hataMsg.style.display = 'block';
+  });
+}
+
+// beni hatırla - sayfaya girince doldur ve otomatik giriş yap
+window.onload = function() {
+  // onceki surumlerde sifre localStorage'a yaziliyordu - kalmis olani temizle
+  localStorage.removeItem('sgSifre');
+
+  var kayitli = localStorage.getItem('sgKullanici');
+  var hatirla = localStorage.getItem('sgHatirla');
+  if (kayitli && hatirla === 'evet') {
+    document.getElementById('kullanici').value = kayitli;
+    document.getElementById('beniHatirla').checked = true;
+    document.getElementById('sifre').focus();
+  }
+};
+  </script>
+
+</body>
+</html>

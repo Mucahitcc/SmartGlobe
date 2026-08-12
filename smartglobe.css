@@ -1,0 +1,120 @@
+/* araç çubuğu */
+.aracCubugu {
+  display: flex;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: 50px;
+}
+
+select {
+  border: 1px solid rgba(60,120,200,0.4);
+  background: rgba(8,13,26,0.85);
+  color: #7ab0ff;
+  width: 180px;
+  height: 43px;
+  font-size: 15px;
+  font-family: sans-serif;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  margin-top: 8px;
+  padding: 0 8px;
+  outline: none;
+}
+
+.button-container {
+  position: absolute;
+  top: 3px;
+  left: 210px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.custom-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 50px;
+  border: 1px solid rgba(60,120,200,0.4);
+  border-radius: 6px;
+  background: rgba(8,13,26,0.85);
+  cursor: pointer;
+  font-size: 11px;
+  text-align: center;
+  transition: all 0.1s ease;
+}
+
+.custom-button .icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  width: 50%;
+  height: 50%;
+}
+
+.custom-button .icon-container img {
+  width: 20px;
+  height: 20px;
+}
+
+.custom-button .text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+  margin-bottom: 5px;
+  color: #7ab0ff;
+}
+
+.custom-button:hover {
+  background: rgba(60,120,200,0.3);
+  border-color: rgba(60,120,200,0.7);
+}
+
+
+#ucDereceCizgi {
+  width: 82px;
+}
+
+/* çizim yokken butonlar gri olur */
+#cizimKaydet:disabled .text-container,
+#dxfKabu:disabled .text-container,
+#kmzKaydet:disabled .text-container {
+  color: #999595;
+}
+
+#cizimKaydet:disabled .icon-container img,
+#dxfKabu:disabled .icon-container img,
+#kmzKaydet:disabled .icon-container img {
+  opacity: 0.5;
+}
+
+/* aktif buton */
+#cizimKaydet.active .text-container,
+#dxfKabu.active .text-container,
+#kmzKaydet.active .text-container {
+  color: #007bff;
+}
+
+
+/* logo sağ altta*/
+.smartGlobeLogo {
+  position: absolute;
+  width: 125px;
+  height: 50px;
+  bottom: 0px;
+  right: 0%;
+  display: flex;
+}
+/* cesium varsayılan UI elemanlarını gizliyor */
+.cesium-viewer-toolbar,
+.cesium-navigation-help,
+.cesium-viewer-fullscreenContainer {
+    display: none !important;
+}
